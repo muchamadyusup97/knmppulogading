@@ -1,423 +1,1067 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="light">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>Telusur Mutu KNMP</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-    <style>
-        :root {
-            box-sizing: border-box;
-            padding-top: env(safe-area-inset-top, 0px);
-            padding-bottom: env(safe-area-inset-bottom, 0px);
-            --bg: #f4f7f9;
-            --cd: #fff;
-            --tx: #14262e;
-            --mu: #5b6f78;
-            --bd: #d9e2e7;
-            --pr: #0b6e8a;
-            --ok: #1a7f4b;
-            --wr: #b7791f;
-            --er: #c0392b
-        }
-
-        @media (prefers-color-scheme:dark) {
-            :root:not([data-theme="light"]) {
-                --bg: #0f1a1f;
-                --cd: #17262d;
-                --tx: #e8f0f3;
-                --mu: #97aab3;
-                --bd: #2a3d46;
-                --pr: #4cb8d6;
-                --ok: #4cc38a;
-                --wr: #e0b04d;
-                --er: #ef7a6c
+    <title>Telusur Mutu KNMP - Sistem CRUD & Role Switcher</title>
+    <!-- Tailwind CSS for modern responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef8fb',
+                            100: '#d5edf3',
+                            500: '#0b6e8a',
+                            600: '#09576d',
+                            700: '#074252'
+                        }
+                    }
+                }
             }
         }
-
-        :root[data-theme="dark"] {
-            --bg: #0f1a1f;
-            --cd: #17262d;
-            --tx: #e8f0f3;
-            --mu: #97aab3;
-            --bd: #2a3d46;
-            --pr: #4cb8d6;
-            --ok: #4cc38a;
-            --wr: #e0b04d;
-            --er: #ef7a6c
+    </script>
+    <!-- QRCode Generator Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        * {
-            box-sizing: border-box
-        }
-
-        html {
-            scroll-padding-top: env(safe-area-inset-top, 0px)
-        }
-
-        body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--tx);
-            font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-            padding-bottom: 70px
-        }
-
-        main {
-            max-width: 640px;
-            margin: 0 auto;
-            padding: 14px
-        }
-
-        h1 {
-            font-size: 19px;
-            margin: 0 0 2px
-        }
-
-        h2 {
-            font-size: 16px;
-            margin: 16px 0 8px
-        }
-
-        .mu {
-            color: var(--mu);
-            font-size: 13px
-        }
-
-        .cd {
-            background: var(--cd);
-            border: 1px solid var(--bd);
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 10px
-        }
-
-        .g {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px
-        }
-
-        .g3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px
-        }
-
-        .st b {
-            font-size: 22px;
-            display: block
-        }
-
-        label {
-            display: block;
-            font-size: 12px;
-            color: var(--mu);
-            margin: 8px 0 3px
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--bd);
-            border-radius: 8px;
-            background: var(--bg);
-            color: var(--tx);
-            font: inherit
-        }
-
-        button {
-            padding: 11px 14px;
-            border: 0;
-            border-radius: 8px;
-            background: var(--pr);
-            color: #fff;
-            font: inherit;
-            font-weight: 600;
-            width: 100%;
-            margin-top: 12px
-        }
-
-        button.s {
-            background: transparent;
-            color: var(--pr);
-            border: 1px solid var(--pr)
-        }
-
-        button.d {
-            background: var(--er)
-        }
-
-        .bg {
-            display: inline-block;
-            padding: 2px 9px;
-            border-radius: 99px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #fff
-        }
-
-        .baik {
-            background: var(--ok)
-        }
-
-        .warn {
-            background: var(--wr)
-        }
-
-        .bad {
-            background: var(--er)
-        }
-
-        .row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px
-        }
-
-        .it {
-            cursor: pointer
-        }
-
-        .al {
-            color: var(--er);
-            font-size: 13px;
-            margin-top: 4px
-        }
-
-        nav {
-            position: fixed;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            background: var(--cd);
-            border-top: 1px solid var(--bd);
-            padding-bottom: env(safe-area-inset-bottom, 0px)
-        }
-
-        nav a {
-            flex: 1;
-            text-align: center;
-            padding: 12px 4px;
-            color: var(--mu);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 600
-        }
-
-        nav a.on {
-            color: var(--pr)
-        }
-
-        .tl {
-            border-left: 3px solid var(--bd);
-            margin-left: 6px;
-            padding-left: 12px
-        }
-
-        .tl .n {
-            font-weight: 600
-        }
-
-        .tl .x {
-            color: var(--mu);
-            font-size: 13px;
-            margin-bottom: 10px
-        }
-
-        .qr {
-            background: #fff;
-            padding: 8px;
-            width: fit-content;
-            margin: 8px auto;
-            border-radius: 8px
-        }
-
-        .qr svg {
-            display: block;
-            width: 160px;
-            height: 160px
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
         }
     </style>
 </head>
 
-<body>
-    <div id="mode" class="mu" style="text-align:center;padding:4px"></div>
-    <main id="app"></main>
-    <nav><a href="#/" id="n1">Dasbor</a><a href="#/baru" id="n2">+ Batch</a><a href="#/cari" id="n3">Lacak</a></nav>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+    <!-- TOP HEADER WITH ROLE SWITCHER & THEME TOGGLE -->
+    <header class="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            
+            <!-- App Branding -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                    <i class="fa-solid fa-fish-fins text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-base leading-tight tracking-tight">KNMP Mutu</h1>
+                    <span id="roleBadgeText" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-300">
+                        Mode: Admin (Petugas)
+                    </span>
+                </div>
+            </div>
+
+            <!-- Role Switcher & Controls -->
+            <div class="flex items-center gap-2 ml-auto">
+                <!-- Role Toggle Button -->
+                <button id="roleSwitcherBtn" onclick="toggleRole()" class="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-600 text-white hover:bg-brand-700 transition shadow-sm">
+                    <i id="roleSwitcherIcon" class="fa-solid fa-user-shield"></i>
+                    <span id="roleSwitcherLabel">Beralih ke Pelanggan</span>
+                </button>
+
+                <!-- Theme Toggle Button -->
+                <button onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Ganti Tema">
+                    <i id="themeIcon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- NOTIFICATION / TOAST CONTAINER -->
+    <div id="toastContainer" class="fixed top-20 right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full px-4"></div>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="flex-1 max-w-4xl w-full mx-auto px-4 py-6 pb-24 animate-fade-in" id="appContent">
+        <!-- Content dynamically injected here -->
+    </main>
+
+    <!-- BOTTOM NAVIGATION (ADMIN VIEW) -->
+    <nav id="bottomNav" class="fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shadow-lg pb-[env(safe-area-inset-bottom,0px)]">
+        <div class="max-w-4xl mx-auto flex justify-around">
+            <a href="#/" id="navDash" onclick="setRoute('#/')" class="flex-1 flex flex-col items-center py-3 text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition text-xs font-medium">
+                <i class="fa-solid fa-chart-pie text-lg mb-1"></i>
+                <span>Dasbor</span>
+            </a>
+            <a href="#/baru" id="navNew" onclick="setRoute('#/baru')" class="flex-1 flex flex-col items-center py-3 text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition text-xs font-medium">
+                <i class="fa-solid fa-circle-plus text-lg mb-1"></i>
+                <span>+ Batch</span>
+            </a>
+            <a href="#/cari" id="navSearch" onclick="setRoute('#/cari')" class="flex-1 flex flex-col items-center py-3 text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition text-xs font-medium">
+                <i class="fa-solid fa-magnifying-glass text-lg mb-1"></i>
+                <span>Lacak</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- JAVASCRIPT APPLICATION CORE -->
     <script>
-        var KEY = "knmp_batches_v1", MAXJAM = 12, MAXT = 4, mem = null;
-        function load() { try { var s = localStorage.getItem(KEY); if (s) return JSON.parse(s) } catch (e) { } return mem }
-        function save() { try { localStorage.setItem(KEY, JSON.stringify(D)) } catch (e) { mem = D } }
-        function iso(h) { return new Date(Date.now() - h * 36e5).toISOString().slice(0, 16) }
-        function seed() {
+        const STORAGE_KEY = "knmp_batches_v2";
+        const MAX_HOURS = 12;
+        const MAX_TEMP = 4;
+        
+        // Application State
+        let batches = [];
+        let currentRole = "admin"; // "admin" or "customer"
+        let currentTheme = localStorage.getItem("knmp_theme") || "light";
+
+        // Initial Seed Data for demonstration
+        function getSeedData() {
+            const now = Date.now();
+            const iso = (hoursAgo) => new Date(now - hoursAgo * 3600000).toISOString().slice(0, 16);
             return [
-                { id: "KNMP-LOK-20261001-001", jenis: "Tongkol", kapal: "KM Sinar Laut", nelayan: "Pak Darman", zona: "WPP-713, 5 mil", alat: "Pancing", tTangkap: iso(30), tDarat: iso(24), berat: 120, suhuPalka: 2, es: 60, skor: 8, suhuIkan: 2.5, grade: "A", histamin: "", flag: false, cold: { suhu: 1.5, batch: "CS-17", tgl: iso(22).slice(0, 10) }, dist: { kend: "Truk berpendingin B 1234 XY", suhu: 3, tujuan: "Pasar Induk" }, jual: { pembeli: "Koperasi Nelayan" } },
-                { id: "KNMP-LOK-20261005-001", jenis: "Cakalang", kapal: "KM Bahari 2", nelayan: "Pak Laode", zona: "WPP-713, 8 mil", alat: "Jaring", tTangkap: iso(9), tDarat: iso(2), berat: 200, suhuPalka: 7, es: 40, skor: 6, suhuIkan: 6.5, grade: "B", histamin: "", flag: false },
-                { id: "KNMP-LOK-20261005-002", jenis: "Kembung", kapal: "KM Sinar Laut", nelayan: "Pak Darman", zona: "WPP-713, 3 mil", alat: "Jaring", tTangkap: iso(8), tDarat: iso(4), berat: 80, suhuPalka: 2, es: 50, skor: 8, suhuIkan: 2, grade: "A", histamin: "", flag: false, cold: { suhu: 1, batch: "CS-19", tgl: iso(3).slice(0, 10) } }]
-        }
-        var D = [], db = null, col = null, isAdmin = false, ready = false;
-        function setMode(t) { var e = document.getElementById("mode"); if (e) e.textContent = t }
-        function persist(b) {
-            var i = D.map(function (x) { return x.id }).indexOf(b.id); if (i < 0) D.push(b); else D[i] = b;
-            if (col) col.doc(b.id).set(JSON.parse(JSON.stringify(b))).catch(function (e) { alert("Gagal menyimpan: " + (e && e.message || e)) }); else save()
-        }
-        function remove(id) {
-            D = D.filter(function (b) { return b.id !== id });
-            if (col) col.doc(id).delete().catch(function (e) { alert("Gagal menghapus: " + (e && e.message || e)) }); else save()
-        }
-        function local() { col = null; D = load() || seed(); save(); ready = true; isAdmin = true; setMode("Mode lokal: data hanya di HP ini"); route() }
-        function refresh() {
-            var m = (location.hash || "#/").split("/")[1] || "", a = document.activeElement;
-            if (m == "baru" || m == "cari" || (a && (a.tagName == "INPUT" || a.tagName == "SELECT"))) return; route()
-        }
-        function init() {
-            if (!window.claude || !claude.use) { local(); return }
-            Promise.all([claude.use("db"), claude.use("user")]).then(function (r) {
-                db = r[0]; var u = r[1]; if (!db) { local(); return }
-                col = db.collection("batches");
-                (u && u.canEdit ? u.canEdit() : Promise.resolve(false)).catch(function () { return false }).then(function (v) { isAdmin = !!v; setMode("Data bersama (online)"); if (ready) refresh() });
-                col.onSnapshot(function (s) {
-                    var first = !ready;
-                    D = s.docs.map(function (d) { return d.data() }).sort(function (a, b) { return a.tTangkap < b.tTangkap ? -1 : 1 });
-                    ready = true; if (first) route(); else refresh()
-                }, function (e) { setMode("Gagal terhubung"); local() })
-            }).catch(local)
-        }
-        function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] }) }
-        function fmt(t) { return t ? new Date(t).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "-" }
-        function jam(b) { return (new Date(b.tDarat) - new Date(b.tTangkap)) / 36e5 }
-        function alerts(b) {
-            var a = [];
-            if (b.flag) a.push("Ditandai bermasalah");
-            if (b.skor < 5) a.push("Skor organoleptik " + b.skor + " (<5): tolak");
-            if (b.suhuIkan > MAXT) a.push("Suhu ikan " + b.suhuIkan + "°C > " + MAXT + "°C");
-            if (b.suhuPalka > MAXT) a.push("Suhu palka " + b.suhuPalka + "°C > " + MAXT + "°C");
-            if (jam(b) > MAXJAM) a.push("Tangkap→dermaga " + jam(b).toFixed(1) + " jam > " + MAXJAM + " jam");
-            if (b.cold && b.cold.suhu > MAXT) a.push("Suhu cold storage " + b.cold.suhu + "°C");
-            if (b.dist && b.dist.suhu > MAXT) a.push("Suhu distribusi " + b.dist.suhu + "°C");
-            return a
-        }
-        function stat(b) { var a = alerts(b); return b.flag || b.skor < 5 ? "bad" : a.length ? "warn" : "baik" }
-        var LB = { baik: "Lolos", warn: "Peringatan", bad: "Ditahan" };
-        function badge(b) { var s = stat(b); return '<span class="bg ' + s + '">' + LB[s] + '</span>' }
-        function tahap(b) { return b.jual ? "Dijual" : b.dist ? "Distribusi" : b.cold ? "Cold storage" : "Dermaga" }
-        function byId(id) { return D.filter(function (b) { return b.id === id })[0] }
-        function $(h) { document.getElementById("app").innerHTML = h; window.scrollTo(0, 0) }
-        function field(id, l, t, v, ex) { return '<label for="' + id + '">' + l + '</label><input id="' + id + '" type="' + (t || "text") + '" value="' + esc(v || "") + '" ' + (ex || "") + '>' }
-        function val(id) { return document.getElementById(id).value.trim() }
-
-        function dash() {
-            var n = D.length, ok = 0, w = 0, x = 0, al = []; D.forEach(function (b) { var s = stat(b); if (s == "baik") ok++; else if (s == "warn") w++; else x++; alerts(b).forEach(function (m) { al.push([b.id, m]) }) });
-            var h = '<h1>Kampung Nelayan Merah Putih</h1><div class="mu">Telusur mutu ikan segar, kapal ke konsumen</div><h2>Ringkasan</h2><div class="g3"><div class="cd st"><b>' + ok + '</b><span class="mu">Lolos</span></div><div class="cd st"><b style="color:var(--wr)">' + w + '</b><span class="mu">Peringatan</span></div><div class="cd st"><b style="color:var(--er)">' + x + '</b><span class="mu">Ditahan</span></div></div>';
-            h += '<h2>Peringatan aktif</h2>';
-            h += al.length ? al.map(function (a) { return '<div class="cd it" onclick="location.hash=\'#/b/' + a[0] + '\'"><div class="mu">' + esc(a[0]) + '</div><div class="al">⚠ ' + esc(a[1]) + '</div></div>' }).join("") : '<div class="cd mu">Tidak ada peringatan.</div>';
-            h += '<h2>Semua batch (' + n + ')</h2>' + (n ? '' : '<div class="cd mu">Belum ada batch. Ketuk + Batch untuk mulai.</div>') + D.slice().reverse().map(function (b) { return '<div class="cd it" onclick="location.hash=\'#/b/' + b.id + '\'"><div class="row"><b>' + esc(b.jenis) + ' · ' + b.berat + ' kg</b>' + badge(b) + '</div><div class="mu">' + esc(b.id) + '</div><div class="mu">' + esc(b.kapal) + ' · ' + tahap(b) + '</div></div>' }).join("");
-            h += '<button class="s" onclick="exportCSV()">Unduh rekap (CSV)</button>';
-            $(h)
+                {
+                    id: "KNMP-LOK-20261001-001",
+                    jenis: "Ikan Tongkol Segar",
+                    kapal: "KM Sinar Laut",
+                    nelayan: "Pak Darman",
+                    zona: "WPP-713, 5 mil",
+                    alat: "Pancing Ulur",
+                    tTangkap: iso(30),
+                    tDarat: iso(24),
+                    berat: 120,
+                    suhuPalka: 2.0,
+                    es: 60,
+                    skor: 8,
+                    suhuIkan: 2.5,
+                    grade: "A",
+                    histamin: "1.2",
+                    flag: false,
+                    cold: { suhu: 1.5, batch: "CS-17", tgl: iso(22).slice(0, 10) },
+                    dist: { kend: "Truk Berpendingin B 1234 XY", suhu: 3.0, tujuan: "Pasar Induk Ikan" },
+                    jual: { pembeli: "Koperasi Nelayan Sejahtera" }
+                },
+                {
+                    id: "KNMP-LOK-20261005-001",
+                    jenis: "Ikan Cakalang",
+                    kapal: "KM Bahari 2",
+                    nelayan: "Pak Laode",
+                    zona: "WPP-713, 8 mil",
+                    alat: "Jaring Lingkar",
+                    tTangkap: iso(9),
+                    tDarat: iso(2),
+                    berat: 200,
+                    suhuPalka: 7.0,
+                    es: 40,
+                    skor: 6,
+                    suhuIkan: 6.5,
+                    grade: "B",
+                    histamin: "3.5",
+                    flag: false
+                },
+                {
+                    id: "KNMP-LOK-20261005-002",
+                    jenis: "Ikan Kembung Banjar",
+                    kapal: "KM Sinar Laut",
+                    nelayan: "Pak Darman",
+                    zona: "WPP-713, 3 mil",
+                    alat: "Gill Net",
+                    tTangkap: iso(8),
+                    tDarat: iso(4),
+                    berat: 80,
+                    suhuPalka: 2.0,
+                    es: 50,
+                    skor: 8,
+                    suhuIkan: 2.0,
+                    grade: "A",
+                    histamin: "0.8",
+                    flag: false,
+                    cold: { suhu: 1.0, batch: "CS-19", tgl: iso(3).slice(0, 10) }
+                }
+            ];
         }
 
-        function exportCSV() {
-            var r = [["ID", "Jenis", "Kapal", "Nelayan", "Zona", "Tangkap", "Dermaga", "Berat", "Suhu ikan", "Skor", "Grade", "Status", "Tahap"]];
-            D.forEach(function (b) { r.push([b.id, b.jenis, b.kapal, b.nelayan, b.zona, b.tTangkap, b.tDarat, b.berat, b.suhuIkan, b.skor, b.grade, LB[stat(b)], tahap(b)]) });
-            var c = r.map(function (x) { return x.map(function (v) { return '"' + String(v).replace(/"/g, '""') + '"' }).join(",") }).join("\n");
-            var a = document.createElement("a"); a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(c); a.download = "rekap-mutu-knmp.csv"; document.body.appendChild(a); a.click(); a.remove()
-        }
-
-        function baru() {
-            var now = iso(0);
-            $('<h1>Batch baru</h1><div class="mu">Tahap 1–3: tangkap, kapal, pendaratan</div>' +
-                '<div class="cd"><b>1. Penangkapan</b>' + field("lok", "Kode lokasi", "text", "LOK") + field("jenis", "Jenis ikan", "text", "", "placeholder=\"Tongkol\"") + field("kapal", "Kapal") + field("nel", "Nelayan") + field("zona", "Zona/koordinat tangkap") +
-                '<label for="alat">Alat tangkap</label><select id="alat"><option>Pancing</option><option>Jaring</option><option>Pukat cincin</option><option>Bubu</option></select>' + field("tt", "Waktu tangkap", "datetime-local", iso(6)) + '</div>' +
-                '<div class="cd"><b>2. Penanganan di kapal</b><div class="g">' + field("sp", "Suhu palka °C", "number", "", "step=0.1") + field("es", "Es (kg)", "number") + '</div></div>' +
-                '<div class="cd"><b>3. Pendaratan</b>' + field("td", "Waktu tiba dermaga", "datetime-local", now) + '<div class="g">' + field("br", "Berat (kg)", "number") + field("si", "Suhu ikan °C", "number", "", "step=0.1") + '</div><div class="g">' + field("sk", "Skor organoleptik (1–9)", "number", "8", "min=1 max=9") +
-                '<div><label for="gr">Grade</label><select id="gr"><option>A</option><option>B</option><option>C</option></select></div></div>' + field("hi", "Histamin mg/kg (jika diuji)", "number") + '</div>' +
-                '<button onclick="simpanBaru()">Simpan &amp; buat QR</button>')
-        }
-
-        function simpanBaru() {
-            var req = ["jenis", "kapal", "nel", "tt", "td", "br", "si", "sk", "sp"], i;
-            for (i = 0; i < req.length; i++)if (!val(req[i])) { alert("Lengkapi data wajib."); return }
-            var sk = +val("sk"); if (sk < 1 || sk > 9) { alert("Skor harus 1–9."); return }
-            var tgl = val("tt").slice(0, 10).replace(/-/g, ""), kode = (val("lok") || "LOK").toUpperCase().replace(/[^A-Z0-9]/g, "");
-            var pre = "KNMP-" + kode + "-" + tgl + "-", nn = D.filter(function (b) { return b.id.indexOf(pre) === 0 }).length + 1, id = pre + ("00" + nn).slice(-3);
-            persist({ id: id, jenis: val("jenis"), kapal: val("kapal"), nelayan: val("nel"), zona: val("zona"), alat: val("alat"), tTangkap: val("tt"), tDarat: val("td"), berat: +val("br"), suhuPalka: +val("sp"), es: +val("es"), skor: sk, suhuIkan: +val("si"), grade: val("gr"), histamin: val("hi"), flag: false });
-            location.hash = "#/b/" + id
-        }
-
-        function detail(id) {
-            var b = byId(id); if (!b) { $('<div class="cd">Batch tidak ditemukan.</div>'); return }
-            var a = alerts(b), h = '<div class="row"><h1>' + esc(b.jenis) + '</h1>' + badge(b) + '</div><div class="mu">' + esc(b.id) + '</div>';
-            h += a.map(function (m) { return '<div class="al">⚠ ' + esc(m) + '</div>' }).join("");
-            h += '<div class="cd"><div class="qr" id="qr"></div><div class="mu" style="text-align:center">Tempel QR di wadah. Konsumen scan untuk melihat asal ikan.</div></div>';
-            h += '<h2>Jejak batch</h2><div class="tl">' +
-                st("1. Penangkapan", esc(b.kapal) + " · " + esc(b.nelayan) + "<br>" + esc(b.zona) + " · " + esc(b.alat) + "<br>" + fmt(b.tTangkap)) +
-                st("2. Penanganan kapal", "Suhu palka " + b.suhuPalka + "°C · es " + (b.es || "-") + " kg") +
-                st("3. Pendaratan", fmt(b.tDarat) + " (" + jam(b).toFixed(1) + " jam)<br>" + b.berat + " kg · " + b.suhuIkan + "°C · skor " + b.skor + "/9 · grade " + b.grade + (b.histamin ? "<br>Histamin " + esc(b.histamin) + " mg/kg" : "")) +
-                (b.cold ? st("4. Cold storage", "Ruang " + b.cold.suhu + "°C · batch " + esc(b.cold.batch) + " · " + esc(b.cold.tgl)) : "") +
-                (b.dist ? st("5. Distribusi", esc(b.dist.kend) + "<br>Suhu " + b.dist.suhu + "°C · tujuan " + esc(b.dist.tujuan)) : "") +
-                (b.jual ? st("6. Penjualan", esc(b.jual.pembeli)) : "") + '</div>';
-            if (!b.cold) h += '<div class="cd"><b>Tahap 4: cold storage</b>' + field("c1", "Suhu ruang °C", "number", "", "step=0.1") + field("c2", "Nomor batch olah", "text", "CS-") + '<button onclick="addStage(\'' + id + '\',\'cold\')">Simpan tahap 4</button></div>';
-            else if (!b.dist) h += '<div class="cd"><b>Tahap 5: distribusi</b>' + field("d1", "Kendaraan berpendingin (plat)") + field("d2", "Suhu selama perjalanan °C", "number", "", "step=0.1") + field("d3", "Tujuan") + '<button onclick="addStage(\'' + id + '\',\'dist\')">Simpan tahap 5</button></div>';
-            else if (!b.jual) h += '<div class="cd"><b>Tahap 6: penjualan</b>' + field("j1", "Pasar / koperasi / pembeli") + '<button onclick="addStage(\'' + id + '\',\'jual\')">Simpan tahap 6</button></div>';
-            var kin = D.filter(function (x) { return x.id !== b.id && x.kapal === b.kapal });
-            h += '<h2>Telusur untuk recall</h2><div class="cd"><div class="mu">Mundur: asal</div>' + esc(b.kapal) + ' · ' + esc(b.nelayan) + ' · ' + esc(b.zona) + '<div class="mu" style="margin-top:8px">Maju: tujuan</div>' + (b.jual ? esc(b.jual.pembeli) : b.dist ? esc(b.dist.tujuan) : 'Belum keluar dari tempat pendaratan/cold storage') +
-                '<div class="mu" style="margin-top:8px">Batch lain dari kapal yang sama</div>' + (kin.length ? kin.map(function (x) { return '<div class="it" onclick="location.hash=\'#/b/' + x.id + '\'">' + esc(x.id) + ' ' + badge(x) + '</div>' }).join("") : '-') + '</div>';
-            h += '<button class="' + (b.flag ? 's' : 'd') + '" onclick="toggleFlag(\'' + id + '\')">' + (b.flag ? 'Lepas tanda bermasalah' : 'Tandai bermasalah &amp; pisahkan') + '</button>';
-            h += '<button class="s" onclick="location.hash=\'#/k/' + id + '\'">Lihat tampilan konsumen</button>';
-            if (isAdmin) h += '<button class="d" id="del" onclick="hapus(\'' + id + '\')">Hapus batch</button>';
-            $(h); qrDraw(id)
-        }
-        var delT = null;
-        function hapus(id) {
-            var btn = document.getElementById("del");
-            if (!btn.dataset.ok) { btn.dataset.ok = "1"; btn.textContent = "Ketuk lagi untuk hapus permanen"; delT = setTimeout(function () { if (btn) { delete btn.dataset.ok; btn.textContent = "Hapus batch" } }, 4000); return }
-            clearTimeout(delT); remove(id); location.hash = "#/"
-        }
-        function st(n, x) { return '<div class="n">' + n + '</div><div class="x">' + x + '</div>' }
-        function qrDraw(id) {
-            var el = document.getElementById("qr"); if (!el) return;
-            try { var q = qrcode(0, "M"); q.addData(location.href.split("#")[0] + "#/k/" + id); q.make(); el.innerHTML = q.createSvgTag(4) } catch (e) { el.innerHTML = '<div class="mu" style="color:#333">QR gagal dimuat.<br>' + esc(id) + '</div>' }
-        }
-        function addStage(id, k) {
-            var b = byId(id);
-            if (k == "cold") { if (!val("c1")) { alert("Isi suhu."); return } b.cold = { suhu: +val("c1"), batch: val("c2"), tgl: new Date().toISOString().slice(0, 10) } }
-            if (k == "dist") { if (!val("d2") || !val("d3")) { alert("Isi suhu dan tujuan."); return } b.dist = { kend: val("d1"), suhu: +val("d2"), tujuan: val("d3") } }
-            if (k == "jual") { if (!val("j1")) { alert("Isi pembeli."); return } b.jual = { pembeli: val("j1") } }
-            persist(b); detail(id)
-        }
-        function toggleFlag(id) { var b = byId(id); b.flag = !b.flag; persist(b); detail(id) }
-
-        function konsumen(id) {
-            var b = byId(id);
-            if (!b) { $('<div class="cd">Kode tidak dikenali.</div>'); return }
-            var bad = stat(b) == "bad";
-            $('<h1>Asal ikan Anda</h1><div class="mu">Kampung Nelayan Merah Putih</div><div class="cd"><div class="row"><b style="font-size:18px">' + esc(b.jenis) + '</b>' + badge(b) + '</div>' + (bad ? '<div class="al">Batch ini sedang ditahan. Jangan dikonsumsi, hubungi penjual.</div>' : '') +
-                '<div class="mu" style="margin-top:8px">Kapal</div>' + esc(b.kapal) + ' · ' + esc(b.nelayan) + '<div class="mu" style="margin-top:8px">Zona tangkap</div>' + esc(b.zona) + '<div class="mu" style="margin-top:8px">Ditangkap</div>' + fmt(b.tTangkap) + '<div class="mu" style="margin-top:8px">Mutu saat mendarat</div>Skor ' + b.skor + '/9 · grade ' + b.grade + ' · ' + b.suhuIkan + '°C' + '<div class="mu" style="margin-top:8px">Kode batch</div>' + esc(b.id) + '</div><button class="s" onclick="location.hash=\'#/b/' + id + '\'">Masuk sebagai petugas</button>')
-        }
-
-        function cari() {
-            $('<h1>Lacak batch</h1><div class="mu">Ketik ID batch atau bagian dari ID, jenis, atau kapal</div>' + field("q", "Cari") + '<div id="hs"></div>');
-            var i = document.getElementById("q"); i.oninput = function () {
-                var q = i.value.toLowerCase(), r = q ? D.filter(function (b) { return (b.id + b.jenis + b.kapal + b.nelayan).toLowerCase().indexOf(q) > -1 }) : [];
-                document.getElementById("hs").innerHTML = r.map(function (b) { return '<div class="cd it" onclick="location.hash=\'#/b/' + b.id + '\'"><div class="row"><b>' + esc(b.jenis) + '</b>' + badge(b) + '</div><div class="mu">' + esc(b.id) + '</div></div>' }).join("") || (q ? '<div class="mu">Tidak ada hasil.</div>' : "")
+        function initTheme() {
+            if (currentTheme === "dark") {
+                document.documentElement.classList.add("dark");
+                document.getElementById("themeIcon").className = "fa-solid fa-sun";
+            } else {
+                document.documentElement.classList.remove("dark");
+                document.getElementById("themeIcon").className = "fa-solid fa-moon";
             }
         }
 
-        function route() {
-            var h = location.hash || "#/", p = h.split("/");
-            ["n1", "n2", "n3"].forEach(function (n) { document.getElementById(n).className = "" });
-            if (!ready) { $('<div class="cd mu">Memuat data…</div>'); return }
-            var m = p[1] || "";
-            if (m == "baru") { n2.className = "on"; baru() } else if (m == "cari") { n3.className = "on"; cari() }
-            else if (m == "b") { detail(decodeURIComponent(p[2])) } else if (m == "k") { konsumen(decodeURIComponent(p[2])) }
-            else { n1.className = "on"; dash() }
+        function toggleTheme() {
+            currentTheme = currentTheme === "light" ? "dark" : "light";
+            localStorage.setItem("knmp_theme", currentTheme);
+            initTheme();
         }
-        window.onhashchange = route; route(); init();
+
+        function loadData() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEY);
+                if (data) {
+                    batches = JSON.parse(data);
+                } else {
+                    batches = getSeedData();
+                    saveData();
+                }
+            } catch (e) {
+                batches = getSeedData();
+            }
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(batches));
+            } catch (e) {
+                showToast("Gagal menyimpan data ke penyimpanan lokal.", "error");
+            }
+        }
+
+        function showToast(message, type = "success") {
+            const container = document.getElementById("toastContainer");
+            const toast = document.createElement("div");
+            const bgClass = type === "error" ? "bg-red-600 text-white" : "bg-emerald-600 text-white";
+            toast.className = `${bgClass} px-4 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center justify-between gap-3 pointer-events-auto transition transform translate-y-2 opacity-0`;
+            toast.innerHTML = `<span>${message}</span><i class="fa-solid fa-xmark cursor-pointer" onclick="this.parentElement.remove()"></i>`;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove("translate-y-2", "opacity-0");
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add("translate-y-2", "opacity-0");
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        function toggleRole() {
+            currentRole = currentRole === "admin" ? "customer" : "admin";
+            updateRoleUI();
+            
+            // If switching to customer, redirect to customer landing or public search view
+            if (currentRole === "customer") {
+                document.getElementById("bottomNav").style.display = "none";
+                if (batches.length > 0) {
+                    location.hash = "#/k/" + batches[0].id;
+                } else {
+                    location.hash = "#/k/empty";
+                }
+            } else {
+                document.getElementById("bottomNav").style.display = "block";
+                location.hash = "#/";
+            }
+            showToast(`Beralih ke Mode ${currentRole === "admin" ? "Admin (Petugas)" : "Pelanggan (Konsumen)"}`);
+        }
+
+        function updateRoleUI() {
+            const badge = document.getElementById("roleBadgeText");
+            const btnLabel = document.getElementById("roleSwitcherLabel");
+            const btnIcon = document.getElementById("roleSwitcherIcon");
+            
+            if (currentRole === "admin") {
+                badge.textContent = "Mode: Admin (Petugas)";
+                badge.className = "text-xs font-semibold px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-300";
+                btnLabel.textContent = "Beralih ke Pelanggan";
+                btnIcon.className = "fa-solid fa-user-shield";
+                document.getElementById("bottomNav").style.display = "block";
+            } else {
+                badge.textContent = "Mode: Pelanggan (Konsumen)";
+                badge.className = "text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300";
+                btnLabel.textContent = "Beralih ke Admin";
+                btnIcon.className = "fa-solid fa-user";
+                document.getElementById("bottomNav").style.display = "none";
+            }
+        }
+
+        function calculateHours(batch) {
+            return (new Date(batch.tDarat) - new Date(batch.tTangkap)) / 3600000;
+        }
+
+        function getAlerts(batch) {
+            let alerts = [];
+            const hours = calculateHours(batch);
+            if (batch.flag) alerts.push("Ditandai bermasalah / Recall");
+            if (batch.skor < 5) alerts.push(`Skor organoleptik rendah (${batch.skor}/9)`);
+            if (batch.suhuIkan > MAX_TEMP) alerts.push(`Suhu ikan tinggi (${batch.suhuIkan}°C > ${MAX_TEMP}°C)`);
+            if (batch.suhuPalka > MAX_TEMP) alerts.push(`Suhu palka tinggi (${batch.suhuPalka}°C > ${MAX_TEMP}°C)`);
+            if (hours > MAX_HOURS) alerts.push(`Durasi tangkap-darat lama (${hours.toFixed(1)} jam > ${MAX_HOURS} jam)`);
+            if (batch.cold && batch.cold.suhu > MAX_TEMP) alerts.push(`Suhu cold storage tinggi (${batch.cold.suhu}°C)`);
+            if (batch.dist && batch.dist.suhu > MAX_TEMP) alerts.push(`Suhu distribusi tinggi (${batch.dist.suhu}°C)`);
+            return alerts;
+        }
+
+        function getBatchStatus(batch) {
+            const alerts = getAlerts(batch);
+            if (batch.flag || batch.skor < 5) return "bad";
+            if (alerts.length > 0) return "warn";
+            return "baik";
+        }
+
+        const StatusLabels = {
+            baik: { text: "Lolos Uji Mutu", class: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800" },
+            warn: { text: "Peringatan Mutu", class: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-200 dark:border-amber-800" },
+            bad: { text: "Ditahan / Reject", class: "bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300 border border-red-200 dark:border-red-800" }
+        };
+
+        function renderBadge(batch) {
+            const status = getBatchStatus(batch);
+            const info = StatusLabels[status];
+            return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${info.class}">${info.text}</span>`;
+        }
+
+        function getStageText(batch) {
+            if (batch.jual) return "Sudah Dijual / Konsumen";
+            if (batch.dist) return "Dalam Distribusi";
+            if (batch.cold) return "Cold Storage (Penyimpanan)";
+            return "Pendaratan Dermaga";
+        }
+
+        function formatDateTime(isoStr) {
+            if (!isoStr) return "-";
+            return new Date(isoStr).toLocaleString("id-ID", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+        }
+
+        function findBatchById(id) {
+            return batches.find(b => b.id === id);
+        }
+
+        function setRoute(hash) {
+            location.hash = hash;
+        }
+
+        function renderDashboard() {
+            let lolos = 0, warning = 0, ditahan = 0;
+            let activeAlerts = [];
+
+            batches.forEach(b => {
+                const st = getBatchStatus(b);
+                if (st === "baik") lolos++;
+                else if (st === "warn") warning++;
+                else ditahan++;
+
+                getAlerts(b).forEach(msg => {
+                    activeAlerts.push({ id: b.id, jenis: b.jenis, msg });
+                });
+            });
+
+            let html = `
+                <div class="space-y-6">
+                    <!-- Top Overview Cards -->
+                    <div>
+                        <h2 class="text-xl font-bold tracking-tight">Dasbor Pengawasan Mutu KNMP</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Monitoring rantai pasok dan kelayakan mutu ikan segar dari nelayan.</p>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm text-center">
+                            <span class="text-2xl lg:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">${lolos}</span>
+                            <span class="block text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">Lolos Mutu</span>
+                        </div>
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm text-center">
+                            <span class="text-2xl lg:text-3xl font-extrabold text-amber-600 dark:text-amber-400">${warning}</span>
+                            <span class="block text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">Peringatan</span>
+                        </div>
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm text-center">
+                            <span class="text-2xl lg:text-3xl font-extrabold text-red-600 dark:text-red-400">${ditahan}</span>
+                            <span class="block text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">Ditahan</span>
+                        </div>
+                    </div>
+
+                    <!-- Active Alerts Box -->
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-semibold text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-triangle-exclamation text-amber-500"></i> Peringatan Sistem (${activeAlerts.length})
+                            </h3>
+                        </div>
+                        <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                            ${activeAlerts.length === 0 ? '<p class="text-xs text-slate-400">Tidak ada peringatan aktif saat ini.</p>' : 
+                                activeAlerts.map(a => `
+                                    <div onclick="location.hash='#/b/${a.id}'" class="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 cursor-pointer hover:opacity-80 transition text-xs flex justify-between items-center">
+                                        <div>
+                                            <span class="font-bold text-slate-700 dark:text-slate-200">${a.id} (${a.jenis})</span>
+                                            <p class="text-amber-700 dark:text-amber-400 mt-0.5">${a.msg}</p>
+                                        </div>
+                                        <i class="fa-solid fa-chevron-right text-amber-500 text-xs"></i>
+                                    </div>
+                                `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Batch List -->
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-semibold text-base">Daftar Seluruh Batch (${batches.length})</h3>
+                            <div class="flex gap-2">
+                                <button onclick="exportCSV()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-download"></i> Ekspor CSV
+                                </button>
+                                <button onclick="location.hash='#/baru'" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-600 text-white hover:bg-brand-700 transition flex items-center gap-1.5 shadow-sm">
+                                    <i class="fa-solid fa-plus"></i> Tambah Batch
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            ${batches.length === 0 ? `
+                                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 text-center">
+                                    <i class="fa-solid fa-box-open text-3xl text-slate-300 mb-2"></i>
+                                    <p class="text-sm text-slate-500">Belum ada data batch ikan tercatat.</p>
+                                </div>
+                            ` : batches.slice().reverse().map(b => `
+                                <div onclick="location.hash='#/b/${b.id}'" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm cursor-pointer hover:border-brand-500 transition flex items-center justify-between gap-4">
+                                    <div class="space-y-1">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <span class="font-bold text-sm">${b.jenis}</span>
+                                            <span class="text-xs text-slate-400">• ${b.berat} kg</span>
+                                            ${renderBadge(b)}
+                                        </div>
+                                        <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">${b.id}</div>
+                                        <div class="text-xs text-slate-600 dark:text-slate-300 flex items-center gap-2">
+                                            <span><i class="fa-solid fa-ship mr-1"></i>${b.kapal}</span>
+                                            <span>•</span>
+                                            <span><i class="fa-solid fa-location-dot mr-1"></i>${getStageText(b)}</span>
+                                        </div>
+                                    </div>
+                                    <i class="fa-solid fa-chevron-right text-slate-400 text-sm"></i>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById("appContent").innerHTML = html;
+        }
+
+        function renderNewBatchForm() {
+            const nowIso = new Date().toISOString().slice(0, 16);
+            const defaultLoc = " ";
+            let html = `
+                <div class="space-y-6">
+                    <div>
+                        <h2 class="text-xl font-bold tracking-tight">Tambah Batch Ikan Baru</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Lengkapi formulir multi-tahap penangkapan dan pendaratan mutu ikan.</p>
+                    </div>
+
+                    <form id="newBatchForm" onsubmit="handleCreateBatch(event)" class="space-y-4">
+                        <!-- Tahap 1: Penangkapan -->
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm space-y-3">
+                            <h3 class="font-bold text-sm text-brand-600 dark:text-brand-400 flex items-center gap-2">
+                                <i class="fa-solid fa-anchor"></i> 1. Informasi Penangkapan
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Kode Lokasi/Pelabuhan</label>
+                                    <input type="text" id="inputLoc" required value="${defaultLoc}" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Jenis Ikan</label>
+                                    <input type="text" id="inputJenis" required placeholder="Contoh: Ikan Tongkol" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Nama Kapal</label>
+                                    <input type="text" id="inputKapal" required placeholder="Contoh: KM Sinar Laut" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Nama Nelayan / Nakhoda</label>
+                                    <input type="text" id="inputNelayan" required placeholder="Contoh: Pak Darman" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Zona Tangkap / Koordinat</label>
+                                    <input type="text" id="inputZona" required placeholder="Contoh: WPP-713, 5 mil" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Alat Tangkap</label>
+                                    <select id="inputAlat" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-brand-500">
+                                        <option>Pancing Ulur</option>
+                                        <option>Jaring Lingkar</option>
+                                        <option>Gill Net</option>
+                                        <option>Pukat Cincin</option>
+                                        <option>Bubu</option>
+                                    </select>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Waktu Tangkap</label>
+                                    <input type="datetime-local" id="inputTTangkap" required value="${new Date(Date.now() - 6*3600000).toISOString().slice(0,16)}" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-brand-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tahap 2: Penanganan di Kapal -->
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm space-y-3">
+                            <h3 class="font-bold text-sm text-brand-600 dark:text-brand-400 flex items-center gap-2">
+                                <i class="fa-solid fa-temperature-low"></i> 2. Penanganan di Kapal
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Suhu Palka (°C)</label>
+                                    <input type="number" step="0.1" id="inputSuhuPalka" required placeholder="2.0" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Penggunaan Es (kg)</label>
+                                    <input type="number" id="inputEs" required placeholder="50" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-brand-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tahap 3: Pendaratan & Uji Mutu -->
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm space-y-3">
+                            <h3 class="font-bold text-sm text-brand-600 dark:text-brand-400 flex items-center gap-2">
+                                <i class="fa-solid fa-clipboard-check"></i> 3. Pendaratan & Uji Mutu
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Waktu Tiba di Dermaga</label>
+                                    <input type="datetime-local" id="inputTDarat" required value="${nowIso}" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Berat Total (kg)</label>
+                                    <input type="number" id="inputBerat" required placeholder="100" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Suhu Daging Ikan (°C)</label>
+                                    <input type="number" step="0.1" id="inputSuhuIkan" required placeholder="2.5" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Skor Organoleptik (1 - 9)</label>
+                                    <input type="number" min="1" max="9" id="inputSkor" required value="8" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Grade Mutu</label>
+                                    <select id="inputGrade" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-brand-500">
+                                        <option>A (Sangat Segar)</option>
+                                        <option>B (Segar)</option>
+                                        <option>C (Kurang Segar)</option>
+                                    </select>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Kadar Histamin (mg/kg) - Opsional</label>
+                                    <input type="text" id="inputHistamin" placeholder="Contoh: 1.2" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-brand-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm transition shadow-md shadow-brand-500/20">
+                            Simpan Batch & Buat Kode QR
+                        </button>
+                    </form>
+                </div>
+            `;
+            document.getElementById("appContent").innerHTML = html;
+        }
+
+        function handleCreateBatch(e) {
+            e.preventDefault();
+            const loc = document.getElementById("inputLoc").value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+            const dateStr = document.getElementById("inputTTangkap").value.slice(0, 10).replace(/-/g, "");
+            const prefix = `KNMP-${loc || "LOK"}-${dateStr}-`;
+            const count = batches.filter(b => b.id.startsWith(prefix)).length + 1;
+            const id = prefix + String(count).padStart(3, '0');
+
+            const skorVal = parseInt(document.getElementById("inputSkor").value);
+            if (skorVal < 1 || skorVal > 9) {
+                showToast("Skor organoleptik harus di antara 1 dan 9.", "error");
+                return;
+            }
+
+            const newBatch = {
+                id,
+                jenis: document.getElementById("inputJenis").value,
+                kapal: document.getElementById("inputKapal").value,
+                nelayan: document.getElementById("inputNelayan").value,
+                zona: document.getElementById("inputZona").value,
+                alat: document.getElementById("inputAlat").value,
+                tTangkap: document.getElementById("inputTTangkap").value,
+                tDarat: document.getElementById("inputTDarat").value,
+                berat: parseFloat(document.getElementById("inputBerat").value),
+                suhuPalka: parseFloat(document.getElementById("inputSuhuPalka").value),
+                es: parseFloat(document.getElementById("inputEs").value),
+                skor: skorVal,
+                suhuIkan: parseFloat(document.getElementById("inputSuhuIkan").value),
+                grade: document.getElementById("inputGrade").value.charAt(0),
+                histamin: document.getElementById("inputHistamin").value,
+                flag: false
+            };
+
+            batches.push(newBatch);
+            saveData();
+            showToast("Batch berhasil ditambahkan!");
+            location.hash = "#/b/" + id;
+        }
+
+        function renderBatchDetail(id) {
+            const b = findBatchById(id);
+            if (!b) {
+                document.getElementById("appContent").innerHTML = `<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 text-center"><p class="text-slate-500">Batch tidak ditemukan.</p></div>`;
+                return;
+            }
+
+            const alerts = getAlerts(b);
+            let html = `
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-xl font-bold tracking-tight">${b.jenis}</h2>
+                                ${renderBadge(b)}
+                            </div>
+                            <span class="text-xs font-mono text-slate-500 dark:text-slate-400">${b.id}</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="location.hash='#/k/${b.id}'" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-eye"></i> Tampilan Pelanggan
+                            </button>
+                            <button onclick="toggleFlag('${b.id}')" class="px-3 py-1.5 text-xs font-semibold rounded-lg ${b.flag ? 'bg-amber-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'} transition">
+                                ${b.flag ? '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Ditandai Recall' : 'Tandai Recall'}
+                            </button>
+                        </div>
+                    </div>
+            `;
+
+            if (alerts.length > 0) {
+                html += `
+                    <div class="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 rounded-2xl p-4 text-red-700 dark:text-red-300 text-xs space-y-1">
+                        <div class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> Perhatian Mutu:</div>
+                        <ul class="list-disc list-inside space-y-0.5">
+                            ${alerts.map(a => `<li>${a}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // QR Code Box
+            html += `
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm text-center space-y-3">
+                    <div id="qrContainer" class="bg-white p-3 inline-block rounded-xl border border-slate-200"></div>
+                    <div>
+                        <p class="text-xs font-semibold text-slate-700 dark:text-slate-200">Kode QR Pelanggan</p>
+                        <p class="text-xs text-slate-400">Scan untuk langsung melihat transparansi asal ikan.</p>
+                    </div>
+                </div>
+            `;
+
+            // Timeline / Stages
+            html += `
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm space-y-4">
+                    <h3 class="font-bold text-sm text-slate-700 dark:text-slate-200"><i class="fa-solid fa-timeline mr-2 text-brand-500"></i>Jejak Rantai Pasok Ikan</h3>
+                    
+                    <div class="border-l-2 border-brand-500/30 ml-2 pl-4 space-y-4">
+                        <div>
+                            <div class="text-xs font-bold text-brand-600 dark:text-brand-400">1. Penangkapan</div>
+                            <div class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                                Kapal: <b>${b.kapal}</b> (${b.nelayan})<br>
+                                Zona: ${b.zona} | Alat: ${b.alat}<br>
+                                Waktu: ${formatDateTime(b.tTangkap)}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-brand-600 dark:text-brand-400">2. Penanganan di Kapal</div>
+                            <div class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                                Suhu Palka: ${b.suhuPalka}°C | Penggunaan Es: ${b.es} kg
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-brand-600 dark:text-brand-400">3. Pendaratan & Uji Mutu</div>
+                            <div class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                                Tiba: ${formatDateTime(b.tDarat)} (${calculateHours(b).toFixed(1)} jam dari tangkap)<br>
+                                Berat: ${b.berat} kg | Suhu Daging: ${b.suhuIkan}°C<br>
+                                Skor Organoleptik: <b>${b.skor}/9</b> | Grade: <b>${b.grade}</b>
+                                ${b.histamin ? `<br>Histamin: ${b.histamin} mg/kg` : ''}
+                            </div>
+                        </div>
+            `;
+
+            if (b.cold) {
+                html += `
+                    <div>
+                        <div class="text-xs font-bold text-brand-600 dark:text-brand-400">4. Cold Storage (Penyimpanan)</div>
+                        <div class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                            Suhu Ruang: ${b.cold.suhu}°C | Batch CS: ${b.cold.batch} | Tanggal: ${b.cold.tgl}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (b.dist) {
+                html += `
+                    <div>
+                        <div class="text-xs font-bold text-brand-600 dark:text-brand-400">5. Distribusi</div>
+                        <div class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                            Kendaraan: ${b.dist.kend} | Suhu: ${b.dist.suhu}°C | Tujuan: ${b.dist.tujuan}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (b.jual) {
+                html += `
+                    <div>
+                        <div class="text-xs font-bold text-brand-600 dark:text-brand-400">6. Penjualan / Konsumen</div>
+                        <div class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                            Pembeli / Pasar: <b>${b.jual.pembeli}</b>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += `</div></div>`;
+
+            // Stage Update Forms
+            if (!b.cold) {
+                html += `
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm space-y-3">
+                        <h4 class="font-bold text-xs text-slate-700 dark:text-slate-200">Tambah Tahap 4: Cold Storage</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <input type="number" step="0.1" id="csSuhu" placeholder="Suhu Ruang (°C)" class="px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
+                            <input type="text" id="csBatch" placeholder="Nomor Batch CS (Contoh: CS-18)" value="CS-" class="px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
+                        </div>
+                        <button onclick="addStage('${b.id}', 'cold')" class="w-full py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold transition">Simpan Cold Storage</button>
+                    </div>
+                `;
+            } else if (!b.dist) {
+                html += `
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm space-y-3">
+                        <h4 class="font-bold text-xs text-slate-700 dark:text-slate-200">Tambah Tahap 5: Distribusi</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <input type="text" id="distKend" placeholder="Kendaraan (Plat / Truk)" class="px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
+                            <input type="number" step="0.1" id="distSuhu" placeholder="Suhu Perjalanan (°C)" class="px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
+                            <input type="text" id="distTujuan" placeholder="Tujuan Pengiriman" class="px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
+                        </div>
+                        <button onclick="addStage('${b.id}', 'dist')" class="w-full py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold transition">Simpan Distribusi</button>
+                    </div>
+                `;
+            } else if (!b.jual) {
+                html += `
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm space-y-3">
+                        <h4 class="font-bold text-xs text-slate-700 dark:text-slate-200">Tambah Tahap 6: Penjualan</h4>
+                        <input type="text" id="jualPembeli" placeholder="Nama Koperasi / Pasar / Pembeli Akhir" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
+                        <button onclick="addStage('${b.id}', 'jual')" class="w-full py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold transition">Simpan Penjualan</button>
+                    </div>
+                `;
+            }
+
+            // Delete Batch Button
+            html += `
+                <div class="pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                    <button onclick="deleteBatch('${b.id}')" class="px-4 py-2 text-xs font-semibold rounded-xl bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-400 hover:bg-red-200 transition">
+                        <i class="fa-solid fa-trash mr-1"></i> Hapus Batch Ini
+                    </button>
+                    <button onclick="location.hash='#/'" class="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 transition">
+                        Kembali ke Dasbor
+                    </button>
+                </div>
+            `;
+
+            html += `</div>`;
+            document.getElementById("appContent").innerHTML = html;
+            generateQRCode(b.id);
+        }
+
+        function generateQRCode(id) {
+            const container = document.getElementById("qrContainer");
+            if (!container) return;
+            try {
+                const qrUrl = window.location.href.split("#")[0] + "#/k/" + id;
+                const qr = qrcode(0, 'M');
+                qr.addData(qrUrl);
+                qr.make();
+                container.innerHTML = qr.createSvgTag(5);
+            } catch (e) {
+                container.innerHTML = `<span class="text-xs text-red-500">Gagal membuat QR</span>`;
+            }
+        }
+
+        function addStage(id, type) {
+            const b = findBatchById(id);
+            if (!b) return;
+
+            if (type === 'cold') {
+                const suhu = parseFloat(document.getElementById("csSuhu").value);
+                const batchNum = document.getElementById("csBatch").value.trim();
+                if (isNaN(suhu) || !batchNum) {
+                    showToast("Lengkapi data cold storage dengan benar.", "error");
+                    return;
+                }
+                b.cold = { suhu, batch: batchNum, tgl: new Date().toISOString().slice(0, 10) };
+            } else if (type === 'dist') {
+                const kend = document.getElementById("distKend").value.trim();
+                const suhu = parseFloat(document.getElementById("distSuhu").value);
+                const tujuan = document.getElementById("distTujuan").value.trim();
+                if (!kend || isNaN(suhu) || !tujuan) {
+                    showToast("Lengkapi data distribusi dengan benar.", "error");
+                    return;
+                }
+                b.dist = { kend, suhu, tujuan };
+            } else if (type === 'jual') {
+                const pembeli = document.getElementById("jualPembeli").value.trim();
+                if (!pembeli) {
+                    showToast("Masukkan nama pembeli/koperasi.", "error");
+                    return;
+                }
+                b.jual = { pembeli };
+            }
+
+            saveData();
+            showToast("Tahap rantai pasok berhasil diperbarui!");
+            renderBatchDetail(id);
+        }
+
+        function toggleFlag(id) {
+            const b = findBatchById(id);
+            if (!b) return;
+            b.flag = !b.flag;
+            saveData();
+            showToast(b.flag ? "Batch ditandai bermasalah (Recall)." : "Tanda masalah dilepas.");
+            renderBatchDetail(id);
+        }
+
+        function deleteBatch(id) {
+            if (!confirm("Apakah Anda yakin ingin menghapus batch ini secara permanen?")) return;
+            batches = batches.filter(b => b.id !== id);
+            saveData();
+            showToast("Batch berhasil dihapus.");
+            location.hash = "#/";
+        }
+
+        function renderCustomerView(id) {
+            const b = findBatchById(id);
+            if (!b) {
+                document.getElementById("appContent").innerHTML = `
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 text-center space-y-3">
+                        <i class="fa-solid fa-triangle-exclamation text-3xl text-amber-500"></i>
+                        <h2 class="text-lg font-bold">Data Ikan Tidak Ditemukan</h2>
+                        <p class="text-xs text-slate-500">Pastikan kode QR atau ID batch yang Anda masukkan benar.</p>
+                        <button onclick="location.hash='#/cari'" class="px-4 py-2 text-xs font-semibold bg-brand-600 text-white rounded-xl">Cari Batch Lain</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const status = getBatchStatus(b);
+            const isBad = status === "bad";
+
+            let html = `
+                <div class="space-y-6 max-w-lg mx-auto">
+                    <!-- Consumer Header Banner -->
+                    <div class="bg-gradient-to-r from-brand-600 to-cyan-600 text-white p-6 rounded-3xl shadow-lg space-y-2 text-center">
+                        <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl mx-auto flex items-center justify-center text-white text-xl mb-1">
+                            <i class="fa-solid fa-fish"></i>
+                        </div>
+                        <h2 class="text-xl font-extrabold tracking-tight">Transparansi Mutu Ikan Anda</h2>
+                        <p class="text-xs text-brand-100">Kampung Nelayan Merah Putih (KNMP)</p>
+                    </div>
+            `;
+
+            if (isBad) {
+                html += `
+                    <div class="bg-red-500 text-white p-4 rounded-2xl text-xs font-semibold text-center shadow-md animate-pulse">
+                        <i class="fa-solid fa-ban text-base mb-1 block"></i>
+                        PERINGATAN: Batch ikan ini sedang ditahan atau dalam status recall. Jangan dikonsumsi dan segera hubungi pihak pengelola!
+                    </div>
+                `;
+            }
+
+            html += `
+                <!-- Main Info Card -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                        <div>
+                            <span class="text-xs text-slate-400 font-mono">ID: ${b.id}</span>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">${b.jenis}</h3>
+                        </div>
+                        ${renderBadge(b)}
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 text-xs">
+                        <div class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl">
+                            <span class="text-slate-400 block mb-0.5"><i class="fa-solid fa-ship mr-1"></i> Kapal & Nelayan</span>
+                            <strong class="text-slate-800 dark:text-slate-200">${b.kapal}</strong><br>
+                            <span class="text-slate-500">${b.nelayan}</span>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl">
+                            <span class="text-slate-400 block mb-0.5"><i class="fa-solid fa-location-dot mr-1"></i> Zona Tangkap</span>
+                            <strong class="text-slate-800 dark:text-slate-200">${b.zona}</strong><br>
+                            <span class="text-slate-500">Alat: ${b.alat}</span>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl">
+                            <span class="text-slate-400 block mb-0.5"><i class="fa-solid fa-clock mr-1"></i> Waktu Tangkap</span>
+                            <strong class="text-slate-800 dark:text-slate-200">${formatDateTime(b.tTangkap)}</strong>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl">
+                            <span class="text-slate-400 block mb-0.5"><i class="fa-solid fa-award mr-1"></i> Mutu & Grade</span>
+                            <strong class="text-slate-800 dark:text-slate-200">Grade ${b.grade} (Skor ${b.skor}/9)</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simple Consumer Journey -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-4">
+                    <h3 class="font-bold text-sm text-slate-700 dark:text-slate-200">Perjalanan Ikan ke Tangan Anda</h3>
+                    <div class="space-y-3 text-xs">
+                        <div class="flex items-start gap-3">
+                            <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 font-bold">1</div>
+                            <div>
+                                <strong class="block text-slate-800 dark:text-slate-200">Ditangkap di Laut</strong>
+                                <span class="text-slate-500">Ditangkap oleh nelayan ${b.nelayan} menggunakan ${b.alat} di zona ${b.zona}.</span>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 font-bold">2</div>
+                            <div>
+                                <strong class="block text-slate-800 dark:text-slate-200">Pendaratan & Pendinginan</strong>
+                                <span class="text-slate-500">Tiba di dermaga dengan suhu palka terjaga (${b.suhuPalka}°C) dan diuji mutu dengan skor ${b.skor}/9.</span>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 font-bold">3</div>
+                            <div>
+                                <strong class="block text-slate-800 dark:text-slate-200">Distribusi & Pasar</strong>
+                                <span class="text-slate-500">${b.jual ? 'Telah disalurkan ke pembeli/koperasi: ' + b.jual.pembeli : b.dist ? 'Dalam perjalanan menuju ' + b.dist.tujuan : 'Dalam penyimpanan cold storage.'}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center pt-2">
+                    <button onclick="toggleRole()" class="px-6 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs hover:bg-slate-300 transition">
+                        Beralih Kembali ke Mode Admin
+                    </button>
+                </div>
+            </div>
+            `;
+
+            document.getElementById("appContent").innerHTML = html;
+        }
+
+        function renderSearch() {
+            let html = `
+                <div class="space-y-6">
+                    <div>
+                        <h2 class="text-xl font-bold tracking-tight">Lacak Batch Ikan</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Cari berdasarkan ID batch, jenis ikan, nama kapal, atau nelayan.</p>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm">
+                        <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400"></i>
+                            <input type="text" id="searchInput" oninput="handleSearchInput()" placeholder="Ketik kata kunci pencarian..." class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-brand-500">
+                        </div>
+                    </div>
+
+                    <div id="searchResults" class="space-y-3">
+                        <div class="text-center py-8 text-slate-400 text-xs">Mulai ketik di atas untuk mencari data batch.</div>
+                    </div>
+                </div>
+            `;
+            document.getElementById("appContent").innerHTML = html;
+        }
+
+        function handleSearchInput() {
+            const query = document.getElementById("searchInput").value.toLowerCase().trim();
+            const container = document.getElementById("searchResults");
+            
+            if (!query) {
+                container.innerHTML = `<div class="text-center py-8 text-slate-400 text-xs">Mulai ketik di atas untuk mencari data batch.</div>`;
+                return;
+            }
+
+            const results = batches.filter(b => 
+                b.id.toLowerCase().includes(query) ||
+                b.jenis.toLowerCase().includes(query) ||
+                b.kapal.toLowerCase().includes(query) ||
+                b.nelayan.toLowerCase().includes(query)
+            );
+
+            if (results.length === 0) {
+                container.innerHTML = `<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 text-center text-slate-400 text-xs">Tidak ditemukan batch yang sesuai dengan kata kunci tersebut.</div>`;
+                return;
+            }
+
+            container.innerHTML = results.map(b => `
+                <div onclick="location.hash='#/b/${b.id}'" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm cursor-pointer hover:border-brand-500 transition flex items-center justify-between gap-4">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-sm">${b.jenis}</span>
+                            ${renderBadge(b)}
+                        </div>
+                        <div class="text-xs font-mono text-slate-400">${b.id}</div>
+                        <div class="text-xs text-slate-600 dark:text-slate-300">Kapal: ${b.kapal} (${b.nelayan})</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-400 text-sm"></i>
+                </div>
+            `).join('');
+        }
+
+        function exportCSV() {
+            let rows = [["ID", "Jenis Ikan", "Kapal", "Nelayan", "Zona Tangkap", "Waktu Tangkap", "Waktu Darat", "Berat (kg)", "Suhu Ikan (°C)", "Skor Organoleptik", "Grade", "Status Mutu", "Tahap Terakhir"]];
+            batches.forEach(b => {
+                rows.push([
+                    b.id,
+                    b.jenis,
+                    b.kapal,
+                    b.nelayan,
+                    b.zona,
+                    b.tTangkap,
+                    b.tDarat,
+                    b.berat,
+                    b.suhuIkan,
+                    b.skor,
+                    b.grade,
+                    StatusLabels[getBatchStatus(b)].text,
+                    getStageText(b)
+                ]);
+            });
+
+            const csvContent = rows.map(e => e.map(val => `"${String(val).replace(/"/g, '""')}"`).join(",")).join("\n");
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `rekap_mutu_knmp_${new Date().toISOString().slice(0,10)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            showToast("Rekap CSV berhasil diunduh.");
+        }
+
+        function router() {
+            const hash = location.hash || "#/";
+            const parts = hash.split("/");
+
+            // Highlight bottom nav items if in admin mode
+            if (currentRole === "admin") {
+                document.getElementById("navDash").className = `flex-1 flex flex-col items-center py-3 transition text-xs font-medium ${hash === '#/' ? 'text-brand-600 dark:text-brand-400' : 'text-slate-500 dark:text-slate-400'}`;
+                document.getElementById("navNew").className = `flex-1 flex flex-col items-center py-3 transition text-xs font-medium ${hash === '#/baru' ? 'text-brand-600 dark:text-brand-400' : 'text-slate-500 dark:text-slate-400'}`;
+                document.getElementById("navSearch").className = `flex-1 flex flex-col items-center py-3 transition text-xs font-medium ${hash === '#/cari' ? 'text-brand-600 dark:text-brand-400' : 'text-slate-500 dark:text-slate-400'}`;
+            }
+
+            if (parts[1] === "baru") {
+                renderNewBatchForm();
+            } else if (parts[1] === "cari") {
+                renderSearch();
+            } else if (parts[1] === "b") {
+                renderBatchDetail(decodeURIComponent(parts[2]));
+            } else if (parts[1] === "k") {
+                renderCustomerView(decodeURIComponent(parts[2]));
+            } else {
+                if (currentRole === "customer") {
+                    if (batches.length > 0) renderCustomerView(batches[0].id);
+                    else renderCustomerView("");
+                } else {
+                    renderDashboard();
+                }
+            }
+            window.scrollTo(0, 0);
+        }
+
+        window.addEventListener("hashchange", router);
+
+        // Initial Boot
+        window.onload = function() {
+            initTheme();
+            loadData();
+            router();
+        };
     </script>
 </body>
 
