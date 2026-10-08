@@ -47,25 +47,12 @@
         <div class="max-w-4xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
             
             <!-- App Branding -->
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
-                    <i class="fa-solid fa-fish-fins text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-base leading-tight tracking-tight">KNMP Mutu</h1>
-                    <span id="roleBadgeText" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-300">
-                        Mode: Admin (Petugas)
-                    </span>
-                </div>
-            </div>
+           
 
             <!-- Role Switcher & Controls -->
             <div class="flex items-center gap-2 ml-auto">
                 <!-- Role Toggle Button -->
-                <button id="roleSwitcherBtn" onclick="toggleRole()" class="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-600 text-white hover:bg-brand-700 transition shadow-sm">
-                    <i id="roleSwitcherIcon" class="fa-solid fa-user-shield"></i>
-                    <span id="roleSwitcherLabel">Beralih ke Pelanggan</span>
-                </button>
+               
 
                 <!-- Theme Toggle Button -->
                 <button onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Ganti Tema">
@@ -267,7 +254,9 @@
             } else {
                 badge.textContent = "Mode: Pelanggan (Konsumen)";
                 badge.className = "text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300";
-                
+                btnLabel.textContent = "Beralih ke Admin";
+                btnIcon.className = "fa-solid fa-user";
+                document.getElementById("bottomNav").style.display = "none";
             }
         }
 
@@ -920,7 +909,11 @@
                     </div>
                 </div>
 
-               
+                <div class="text-center pt-2">
+                    <button onclick="toggleRole()" class="px-6 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs hover:bg-slate-300 transition">
+                        Beralih Kembali ke Mode Admin
+                    </button>
+                </div>
             </div>
             `;
 
