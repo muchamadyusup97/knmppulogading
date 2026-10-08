@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Telusur Mutu KNMP</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <style>
+        :root {
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            --bg: #f4f7f9;
+            --cd: #fff;
+            --tx: #14262e;
+            --mu: #5b6f78;
+            --bd: #d9e2e7;
+            --pr: #0b6e8a;
+            --ok: #1a7f4b;
+            --wr: #b7791f;
+            --er: #c0392b
+        }
+
+        @media (prefers-color-scheme:dark) {
+            :root:not([data-theme="light"]) {
+                --bg: #0f1a1f;
+                --cd: #17262d;
+                --tx: #e8f0f3;
+                --mu: #97aab3;
+                --bd: #2a3d46;
+                --pr: #4cb8d6;
+                --ok: #4cc38a;
+                --wr: #e0b04d;
+                --er: #ef7a6c
+            }
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #0f1a1f;
+            --cd: #17262d;
+            --tx: #e8f0f3;
+            --mu: #97aab3;
+            --bd: #2a3d46;
+            --pr: #4cb8d6;
+            --ok: #4cc38a;
+            --wr: #e0b04d;
+            --er: #ef7a6c
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html {
+            scroll-padding-top: env(safe-area-inset-top, 0px)
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--tx);
+            font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            padding-bottom: 70px
+        }
+
+        main {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 14px
+        }
+
+        h1 {
+            font-size: 19px;
+            margin: 0 0 2px
+        }
+
+        h2 {
+            font-size: 16px;
+            margin: 16px 0 8px
+        }
+
+        .mu {
+            color: var(--mu);
+            font-size: 13px
+        }
+
+        .cd {
+            background: var(--cd);
+            border: 1px solid var(--bd);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px
+        }
+
+        .g {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px
+        }
+
+        .g3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px
+        }
+
+        .st b {
+            font-size: 22px;
+            display: block
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: var(--mu);
+            margin: 8px 0 3px
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--bd);
+            border-radius: 8px;
+            background: var(--bg);
+            color: var(--tx);
+            font: inherit
+        }
+
+        button {
+            padding: 11px 14px;
+            border: 0;
+            border-radius: 8px;
+            background: var(--pr);
+            color: #fff;
+            font: inherit;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 12px
+        }
+
+        button.s {
+            background: transparent;
+            color: var(--pr);
+            border: 1px solid var(--pr)
+        }
+
+        button.d {
+            background: var(--er)
+        }
+
+        .bg {
+            display: inline-block;
+            padding: 2px 9px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff
+        }
+
+        .baik {
+            background: var(--ok)
+        }
+
+        .warn {
+            background: var(--wr)
+        }
+
+        .bad {
+            background: var(--er)
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px
+        }
+
+        .it {
+            cursor: pointer
+        }
+
+        .al {
+            color: var(--er);
+            font-size: 13px;
+            margin-top: 4px
+        }
+
+        nav {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            background: var(--cd);
+            border-top: 1px solid var(--bd);
+            padding-bottom: env(safe-area-inset-bottom, 0px)
+        }
+
+        nav a {
+            flex: 1;
+            text-align: center;
+            padding: 12px 4px;
+            color: var(--mu);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        nav a.on {
+            color: var(--pr)
+        }
+
+        .tl {
+            border-left: 3px solid var(--bd);
+            margin-left: 6px;
+            padding-left: 12px
+        }
+
+        .tl .n {
+            font-weight: 600
+        }
+
+        .tl .x {
+            color: var(--mu);
+            font-size: 13px;
+            margin-bottom: 10px
+        }
+
+        .qr {
+            background: #fff;
+            padding: 8px;
+            width: fit-content;
+            margin: 8px auto;
+            border-radius: 8px
+        }
+
+        .qr svg {
+            display: block;
+            width: 160px;
+            height: 160px
+        }
+    </style>
+</head>
+
+<body>
+    <div id="mode" class="mu" style="text-align:center;padding:4px"></div>
+    <main id="app"></main>
+    <nav><a href="#/" id="n1">Dasbor</a><a href="#/baru" id="n2">+ Batch</a><a href="#/cari" id="n3">Lacak</a></nav>
+    <script>
+        var KEY = "knmp_batches_v1", MAXJAM = 12, MAXT = 4, mem = null;
+        function load() { try { var s = localStorage.getItem(KEY); if (s) return JSON.parse(s) } catch (e) { } return mem }
+        function save() { try { localStorage.setItem(KEY, JSON.stringify(D)) } catch (e) { mem = D } }
+        function iso(h) { return new Date(Date.now() - h * 36e5).toISOString().slice(0, 16) }
+        function seed() {
+            return [
+                { id: "KNMP-LOK-20261001-001", jenis: "Tongkol", kapal: "KM Sinar Laut", nelayan: "Pak Darman", zona: "WPP-713, 5 mil", alat: "Pancing", tTangkap: iso(30), tDarat: iso(24), berat: 120, suhuPalka: 2, es: 60, skor: 8, suhuIkan: 2.5, grade: "A", histamin: "", flag: false, cold: { suhu: 1.5, batch: "CS-17", tgl: iso(22).slice(0, 10) }, dist: { kend: "Truk berpendingin B 1234 XY", suhu: 3, tujuan: "Pasar Induk" }, jual: { pembeli: "Koperasi Nelayan" } },
+                { id: "KNMP-LOK-20261005-001", jenis: "Cakalang", kapal: "KM Bahari 2", nelayan: "Pak Laode", zona: "WPP-713, 8 mil", alat: "Jaring", tTangkap: iso(9), tDarat: iso(2), berat: 200, suhuPalka: 7, es: 40, skor: 6, suhuIkan: 6.5, grade: "B", histamin: "", flag: false },
+                { id: "KNMP-LOK-20261005-002", jenis: "Kembung", kapal: "KM Sinar Laut", nelayan: "Pak Darman", zona: "WPP-713, 3 mil", alat: "Jaring", tTangkap: iso(8), tDarat: iso(4), berat: 80, suhuPalka: 2, es: 50, skor: 8, suhuIkan: 2, grade: "A", histamin: "", flag: false, cold: { suhu: 1, batch: "CS-19", tgl: iso(3).slice(0, 10) } }]
+        }
+        var D = [], db = null, col = null, isAdmin = false, ready = false;
+        function setMode(t) { var e = document.getElementById("mode"); if (e) e.textContent = t }
+        function persist(b) {
+            var i = D.map(function (x) { return x.id }).indexOf(b.id); if (i < 0) D.push(b); else D[i] = b;
+            if (col) col.doc(b.id).set(JSON.parse(JSON.stringify(b))).catch(function (e) { alert("Gagal menyimpan: " + (e && e.message || e)) }); else save()
+        }
+        function remove(id) {
+            D = D.filter(function (b) { return b.id !== id });
+            if (col) col.doc(id).delete().catch(function (e) { alert("Gagal menghapus: " + (e && e.message || e)) }); else save()
+        }
+        function local() { col = null; D = load() || seed(); save(); ready = true; isAdmin = true; setMode("Mode lokal: data hanya di HP ini"); route() }
+        function refresh() {
+            var m = (location.hash || "#/").split("/")[1] || "", a = document.activeElement;
+            if (m == "baru" || m == "cari" || (a && (a.tagName == "INPUT" || a.tagName == "SELECT"))) return; route()
+        }
+        function init() {
+            if (!window.claude || !claude.use) { local(); return }
+            Promise.all([claude.use("db"), claude.use("user")]).then(function (r) {
+                db = r[0]; var u = r[1]; if (!db) { local(); return }
+                col = db.collection("batches");
+                (u && u.canEdit ? u.canEdit() : Promise.resolve(false)).catch(function () { return false }).then(function (v) { isAdmin = !!v; setMode("Data bersama (online)"); if (ready) refresh() });
+                col.onSnapshot(function (s) {
+                    var first = !ready;
+                    D = s.docs.map(function (d) { return d.data() }).sort(function (a, b) { return a.tTangkap < b.tTangkap ? -1 : 1 });
+                    ready = true; if (first) route(); else refresh()
+                }, function (e) { setMode("Gagal terhubung"); local() })
+            }).catch(local)
+        }
+        function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] }) }
+        function fmt(t) { return t ? new Date(t).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "-" }
+        function jam(b) { return (new Date(b.tDarat) - new Date(b.tTangkap)) / 36e5 }
+        function alerts(b) {
+            var a = [];
+            if (b.flag) a.push("Ditandai bermasalah");
+            if (b.skor < 5) a.push("Skor organoleptik " + b.skor + " (<5): tolak");
+            if (b.suhuIkan > MAXT) a.push("Suhu ikan " + b.suhuIkan + "°C > " + MAXT + "°C");
+            if (b.suhuPalka > MAXT) a.push("Suhu palka " + b.suhuPalka + "°C > " + MAXT + "°C");
+            if (jam(b) > MAXJAM) a.push("Tangkap→dermaga " + jam(b).toFixed(1) + " jam > " + MAXJAM + " jam");
+            if (b.cold && b.cold.suhu > MAXT) a.push("Suhu cold storage " + b.cold.suhu + "°C");
+            if (b.dist && b.dist.suhu > MAXT) a.push("Suhu distribusi " + b.dist.suhu + "°C");
+            return a
+        }
+        function stat(b) { var a = alerts(b); return b.flag || b.skor < 5 ? "bad" : a.length ? "warn" : "baik" }
+        var LB = { baik: "Lolos", warn: "Peringatan", bad: "Ditahan" };
+        function badge(b) { var s = stat(b); return '<span class="bg ' + s + '">' + LB[s] + '</span>' }
+        function tahap(b) { return b.jual ? "Dijual" : b.dist ? "Distribusi" : b.cold ? "Cold storage" : "Dermaga" }
+        function byId(id) { return D.filter(function (b) { return b.id === id })[0] }
+        function $(h) { document.getElementById("app").innerHTML = h; window.scrollTo(0, 0) }
+        function field(id, l, t, v, ex) { return '<label for="' + id + '">' + l + '</label><input id="' + id + '" type="' + (t || "text") + '" value="' + esc(v || "") + '" ' + (ex || "") + '>' }
+        function val(id) { return document.getElementById(id).value.trim() }
+
+        function dash() {
+            var n = D.length, ok = 0, w = 0, x = 0, al = []; D.forEach(function (b) { var s = stat(b); if (s == "baik") ok++; else if (s == "warn") w++; else x++; alerts(b).forEach(function (m) { al.push([b.id, m]) }) });
+            var h = '<h1>Kampung Nelayan Merah Putih</h1><div class="mu">Telusur mutu ikan segar, kapal ke konsumen</div><h2>Ringkasan</h2><div class="g3"><div class="cd st"><b>' + ok + '</b><span class="mu">Lolos</span></div><div class="cd st"><b style="color:var(--wr)">' + w + '</b><span class="mu">Peringatan</span></div><div class="cd st"><b style="color:var(--er)">' + x + '</b><span class="mu">Ditahan</span></div></div>';
+            h += '<h2>Peringatan aktif</h2>';
+            h += al.length ? al.map(function (a) { return '<div class="cd it" onclick="location.hash=\'#/b/' + a[0] + '\'"><div class="mu">' + esc(a[0]) + '</div><div class="al">⚠ ' + esc(a[1]) + '</div></div>' }).join("") : '<div class="cd mu">Tidak ada peringatan.</div>';
+            h += '<h2>Semua batch (' + n + ')</h2>' + (n ? '' : '<div class="cd mu">Belum ada batch. Ketuk + Batch untuk mulai.</div>') + D.slice().reverse().map(function (b) { return '<div class="cd it" onclick="location.hash=\'#/b/' + b.id + '\'"><div class="row"><b>' + esc(b.jenis) + ' · ' + b.berat + ' kg</b>' + badge(b) + '</div><div class="mu">' + esc(b.id) + '</div><div class="mu">' + esc(b.kapal) + ' · ' + tahap(b) + '</div></div>' }).join("");
+            h += '<button class="s" onclick="exportCSV()">Unduh rekap (CSV)</button>';
+            $(h)
+        }
+
+        function exportCSV() {
+            var r = [["ID", "Jenis", "Kapal", "Nelayan", "Zona", "Tangkap", "Dermaga", "Berat", "Suhu ikan", "Skor", "Grade", "Status", "Tahap"]];
+            D.forEach(function (b) { r.push([b.id, b.jenis, b.kapal, b.nelayan, b.zona, b.tTangkap, b.tDarat, b.berat, b.suhuIkan, b.skor, b.grade, LB[stat(b)], tahap(b)]) });
+            var c = r.map(function (x) { return x.map(function (v) { return '"' + String(v).replace(/"/g, '""') + '"' }).join(",") }).join("\n");
+            var a = document.createElement("a"); a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(c); a.download = "rekap-mutu-knmp.csv"; document.body.appendChild(a); a.click(); a.remove()
+        }
+
+        function baru() {
+            var now = iso(0);
+            $('<h1>Batch baru</h1><div class="mu">Tahap 1–3: tangkap, kapal, pendaratan</div>' +
+                '<div class="cd"><b>1. Penangkapan</b>' + field("lok", "Kode lokasi", "text", "LOK") + field("jenis", "Jenis ikan", "text", "", "placeholder=\"Tongkol\"") + field("kapal", "Kapal") + field("nel", "Nelayan") + field("zona", "Zona/koordinat tangkap") +
+                '<label for="alat">Alat tangkap</label><select id="alat"><option>Pancing</option><option>Jaring</option><option>Pukat cincin</option><option>Bubu</option></select>' + field("tt", "Waktu tangkap", "datetime-local", iso(6)) + '</div>' +
+                '<div class="cd"><b>2. Penanganan di kapal</b><div class="g">' + field("sp", "Suhu palka °C", "number", "", "step=0.1") + field("es", "Es (kg)", "number") + '</div></div>' +
+                '<div class="cd"><b>3. Pendaratan</b>' + field("td", "Waktu tiba dermaga", "datetime-local", now) + '<div class="g">' + field("br", "Berat (kg)", "number") + field("si", "Suhu ikan °C", "number", "", "step=0.1") + '</div><div class="g">' + field("sk", "Skor organoleptik (1–9)", "number", "8", "min=1 max=9") +
+                '<div><label for="gr">Grade</label><select id="gr"><option>A</option><option>B</option><option>C</option></select></div></div>' + field("hi", "Histamin mg/kg (jika diuji)", "number") + '</div>' +
+                '<button onclick="simpanBaru()">Simpan &amp; buat QR</button>')
+        }
+
+        function simpanBaru() {
+            var req = ["jenis", "kapal", "nel", "tt", "td", "br", "si", "sk", "sp"], i;
+            for (i = 0; i < req.length; i++)if (!val(req[i])) { alert("Lengkapi data wajib."); return }
+            var sk = +val("sk"); if (sk < 1 || sk > 9) { alert("Skor harus 1–9."); return }
+            var tgl = val("tt").slice(0, 10).replace(/-/g, ""), kode = (val("lok") || "LOK").toUpperCase().replace(/[^A-Z0-9]/g, "");
+            var pre = "KNMP-" + kode + "-" + tgl + "-", nn = D.filter(function (b) { return b.id.indexOf(pre) === 0 }).length + 1, id = pre + ("00" + nn).slice(-3);
+            persist({ id: id, jenis: val("jenis"), kapal: val("kapal"), nelayan: val("nel"), zona: val("zona"), alat: val("alat"), tTangkap: val("tt"), tDarat: val("td"), berat: +val("br"), suhuPalka: +val("sp"), es: +val("es"), skor: sk, suhuIkan: +val("si"), grade: val("gr"), histamin: val("hi"), flag: false });
+            location.hash = "#/b/" + id
+        }
+
+        function detail(id) {
+            var b = byId(id); if (!b) { $('<div class="cd">Batch tidak ditemukan.</div>'); return }
+            var a = alerts(b), h = '<div class="row"><h1>' + esc(b.jenis) + '</h1>' + badge(b) + '</div><div class="mu">' + esc(b.id) + '</div>';
+            h += a.map(function (m) { return '<div class="al">⚠ ' + esc(m) + '</div>' }).join("");
+            h += '<div class="cd"><div class="qr" id="qr"></div><div class="mu" style="text-align:center">Tempel QR di wadah. Konsumen scan untuk melihat asal ikan.</div></div>';
+            h += '<h2>Jejak batch</h2><div class="tl">' +
+                st("1. Penangkapan", esc(b.kapal) + " · " + esc(b.nelayan) + "<br>" + esc(b.zona) + " · " + esc(b.alat) + "<br>" + fmt(b.tTangkap)) +
+                st("2. Penanganan kapal", "Suhu palka " + b.suhuPalka + "°C · es " + (b.es || "-") + " kg") +
+                st("3. Pendaratan", fmt(b.tDarat) + " (" + jam(b).toFixed(1) + " jam)<br>" + b.berat + " kg · " + b.suhuIkan + "°C · skor " + b.skor + "/9 · grade " + b.grade + (b.histamin ? "<br>Histamin " + esc(b.histamin) + " mg/kg" : "")) +
+                (b.cold ? st("4. Cold storage", "Ruang " + b.cold.suhu + "°C · batch " + esc(b.cold.batch) + " · " + esc(b.cold.tgl)) : "") +
+                (b.dist ? st("5. Distribusi", esc(b.dist.kend) + "<br>Suhu " + b.dist.suhu + "°C · tujuan " + esc(b.dist.tujuan)) : "") +
+                (b.jual ? st("6. Penjualan", esc(b.jual.pembeli)) : "") + '</div>';
+            if (!b.cold) h += '<div class="cd"><b>Tahap 4: cold storage</b>' + field("c1", "Suhu ruang °C", "number", "", "step=0.1") + field("c2", "Nomor batch olah", "text", "CS-") + '<button onclick="addStage(\'' + id + '\',\'cold\')">Simpan tahap 4</button></div>';
+            else if (!b.dist) h += '<div class="cd"><b>Tahap 5: distribusi</b>' + field("d1", "Kendaraan berpendingin (plat)") + field("d2", "Suhu selama perjalanan °C", "number", "", "step=0.1") + field("d3", "Tujuan") + '<button onclick="addStage(\'' + id + '\',\'dist\')">Simpan tahap 5</button></div>';
+            else if (!b.jual) h += '<div class="cd"><b>Tahap 6: penjualan</b>' + field("j1", "Pasar / koperasi / pembeli") + '<button onclick="addStage(\'' + id + '\',\'jual\')">Simpan tahap 6</button></div>';
+            var kin = D.filter(function (x) { return x.id !== b.id && x.kapal === b.kapal });
+            h += '<h2>Telusur untuk recall</h2><div class="cd"><div class="mu">Mundur: asal</div>' + esc(b.kapal) + ' · ' + esc(b.nelayan) + ' · ' + esc(b.zona) + '<div class="mu" style="margin-top:8px">Maju: tujuan</div>' + (b.jual ? esc(b.jual.pembeli) : b.dist ? esc(b.dist.tujuan) : 'Belum keluar dari tempat pendaratan/cold storage') +
+                '<div class="mu" style="margin-top:8px">Batch lain dari kapal yang sama</div>' + (kin.length ? kin.map(function (x) { return '<div class="it" onclick="location.hash=\'#/b/' + x.id + '\'">' + esc(x.id) + ' ' + badge(x) + '</div>' }).join("") : '-') + '</div>';
+            h += '<button class="' + (b.flag ? 's' : 'd') + '" onclick="toggleFlag(\'' + id + '\')">' + (b.flag ? 'Lepas tanda bermasalah' : 'Tandai bermasalah &amp; pisahkan') + '</button>';
+            h += '<button class="s" onclick="location.hash=\'#/k/' + id + '\'">Lihat tampilan konsumen</button>';
+            if (isAdmin) h += '<button class="d" id="del" onclick="hapus(\'' + id + '\')">Hapus batch</button>';
+            $(h); qrDraw(id)
+        }
+        var delT = null;
+        function hapus(id) {
+            var btn = document.getElementById("del");
+            if (!btn.dataset.ok) { btn.dataset.ok = "1"; btn.textContent = "Ketuk lagi untuk hapus permanen"; delT = setTimeout(function () { if (btn) { delete btn.dataset.ok; btn.textContent = "Hapus batch" } }, 4000); return }
+            clearTimeout(delT); remove(id); location.hash = "#/"
+        }
+        function st(n, x) { return '<div class="n">' + n + '</div><div class="x">' + x + '</div>' }
+        function qrDraw(id) {
+            var el = document.getElementById("qr"); if (!el) return;
+            try { var q = qrcode(0, "M"); q.addData(location.href.split("#")[0] + "#/k/" + id); q.make(); el.innerHTML = q.createSvgTag(4) } catch (e) { el.innerHTML = '<div class="mu" style="color:#333">QR gagal dimuat.<br>' + esc(id) + '</div>' }
+        }
+        function addStage(id, k) {
+            var b = byId(id);
+            if (k == "cold") { if (!val("c1")) { alert("Isi suhu."); return } b.cold = { suhu: +val("c1"), batch: val("c2"), tgl: new Date().toISOString().slice(0, 10) } }
+            if (k == "dist") { if (!val("d2") || !val("d3")) { alert("Isi suhu dan tujuan."); return } b.dist = { kend: val("d1"), suhu: +val("d2"), tujuan: val("d3") } }
+            if (k == "jual") { if (!val("j1")) { alert("Isi pembeli."); return } b.jual = { pembeli: val("j1") } }
+            persist(b); detail(id)
+        }
+        function toggleFlag(id) { var b = byId(id); b.flag = !b.flag; persist(b); detail(id) }
+
+        function konsumen(id) {
+            var b = byId(id);
+            if (!b) { $('<div class="cd">Kode tidak dikenali.</div>'); return }
+            var bad = stat(b) == "bad";
+            $('<h1>Asal ikan Anda</h1><div class="mu">Kampung Nelayan Merah Putih</div><div class="cd"><div class="row"><b style="font-size:18px">' + esc(b.jenis) + '</b>' + badge(b) + '</div>' + (bad ? '<div class="al">Batch ini sedang ditahan. Jangan dikonsumsi, hubungi penjual.</div>' : '') +
+                '<div class="mu" style="margin-top:8px">Kapal</div>' + esc(b.kapal) + ' · ' + esc(b.nelayan) + '<div class="mu" style="margin-top:8px">Zona tangkap</div>' + esc(b.zona) + '<div class="mu" style="margin-top:8px">Ditangkap</div>' + fmt(b.tTangkap) + '<div class="mu" style="margin-top:8px">Mutu saat mendarat</div>Skor ' + b.skor + '/9 · grade ' + b.grade + ' · ' + b.suhuIkan + '°C' + '<div class="mu" style="margin-top:8px">Kode batch</div>' + esc(b.id) + '</div><button class="s" onclick="location.hash=\'#/b/' + id + '\'">Masuk sebagai petugas</button>')
+        }
+
+        function cari() {
+            $('<h1>Lacak batch</h1><div class="mu">Ketik ID batch atau bagian dari ID, jenis, atau kapal</div>' + field("q", "Cari") + '<div id="hs"></div>');
+            var i = document.getElementById("q"); i.oninput = function () {
+                var q = i.value.toLowerCase(), r = q ? D.filter(function (b) { return (b.id + b.jenis + b.kapal + b.nelayan).toLowerCase().indexOf(q) > -1 }) : [];
+                document.getElementById("hs").innerHTML = r.map(function (b) { return '<div class="cd it" onclick="location.hash=\'#/b/' + b.id + '\'"><div class="row"><b>' + esc(b.jenis) + '</b>' + badge(b) + '</div><div class="mu">' + esc(b.id) + '</div></div>' }).join("") || (q ? '<div class="mu">Tidak ada hasil.</div>' : "")
+            }
+        }
+
+        function route() {
+            var h = location.hash || "#/", p = h.split("/");
+            ["n1", "n2", "n3"].forEach(function (n) { document.getElementById(n).className = "" });
+            if (!ready) { $('<div class="cd mu">Memuat data…</div>'); return }
+            var m = p[1] || "";
+            if (m == "baru") { n2.className = "on"; baru() } else if (m == "cari") { n3.className = "on"; cari() }
+            else if (m == "b") { detail(decodeURIComponent(p[2])) } else if (m == "k") { konsumen(decodeURIComponent(p[2])) }
+            else { n1.className = "on"; dash() }
+        }
+        window.onhashchange = route; route(); init();
+    </script>
+</body>
+
+</html>
